@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu with Order Submission</title>
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Restaurant Menu</h1>
+        <div id="menu">
+            <div class="menu-item">
+                <img src="https://media.istockphoto.com/id/1215468752/th/%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B8%96%E0%B9%88%E0%B8%B2%E0%B8%A2/%E0%B9%81%E0%B8%81%E0%B8%87%E0%B8%A1%E0%B8%B1%E0%B8%AA%E0%B8%A1%E0%B8%B1%E0%B9%88%E0%B8%99%E0%B9%84%E0%B8%81%E0%B9%88%E0%B9%83%E0%B8%99%E0%B8%8A%E0%B8%B2%E0%B8%A1%E0%B8%AA%E0%B8%B5%E0%B8%94%E0%B9%8D%E0%B8%B2%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%AB%E0%B8%A5%E0%B8%B1%E0%B8%87%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%94%E0%B8%B2%E0%B8%99%E0%B8%8A%E0%B8%99%E0%B8%A7%E0%B8%99%E0%B8%AA%E0%B8%B5%E0%B9%80%E0%B8%82%E0%B9%89%E0%B8%A1-%E0%B9%81%E0%B8%81%E0%B8%87%E0%B8%A1%E0%B8%B1%E0%B8%AA%E0%B8%A1%E0%B8%B1%E0%B9%88%E0%B8%99%E0%B9%80%E0%B8%9B%E0%B9%87%E0%B8%99%E0%B8%AD%E0%B8%B2%E0%B8%AB%E0%B8%B2%E0%B8%A3%E0%B9%84%E0%B8%97%E0%B8%A2%E0%B8%81%E0%B8%B1%E0%B8%9A%E0%B9%80%E0%B8%99%E0%B8%B7%E0%B9%89%E0%B8%AD%E0%B9%84%E0%B8%81%E0%B9%88%E0%B8%A1%E0%B8%B1.webp?s=2048x2048&w=is&k=20&c=HuJPAxN4eoUo_2BE4pwCi0nU_S6Br9aESuyxq_W9xTk=" alt="Spaghetti Carbonara">
+                <span>Spaghetti Carbonara - $8.99</span>
+                <button onclick="addToOrder('Spaghetti Carbonara', 8.99)">Add to Order</button>
+            </div>
+            <div class="menu-item">
+                <span>Caesar Salad - $5.49</span>
+                <button onclick="addToOrder('Caesar Salad', 5.49)">Add to Order</button>
+            </div>
+            <div class="menu-item">
+                <span>Margherita Pizza - $10.99</span>
+                <button onclick="addToOrder('Margherita Pizza', 10.99)">Add to Order</button>
+            </div>
+            <div class="menu-item">
+                <span>Tiramisu - $4.99</span>
+                <button onclick="addToOrder('Tiramisu', 4.99)">Add to Order</button>
+            </div>
+        </div>
+
+        <div class="order-summary" id="order-summary">
+            <h2>Order Summary</h2>
+            <div id="order-items"></div>
+            <p class="total" id="total-price">Total: $0.00</p>
+            <button onclick="submitOrder()">Submit Order</button>
+        </div>
+    </div>
+
+    <script>
+        const order = [];
+
+        function addToOrder(name, price) {
+            // Add item to the order array
+            order.push({ name, price });
+            updateOrderSummary();
+        }
+
+        function removeFromOrder(index) {
+            // Remove item from the order array
+            order.splice(index, 1);
+            updateOrderSummary();
+        }
+
+        function updateOrderSummary() {
+            const orderItems = document.getElementById('order-items');
+            const totalPriceElement = document.getElementById('total-price');
+
+            // Clear current summary
+            orderItems.innerHTML = '';
+
+            let totalPrice = 0;
+
+            // Display each order item
+            order.forEach((item, index) => {
+                const orderItem = document.createElement('div');
+                orderItem.classList.add('order-item');
+                orderItem.innerHTML = `
+                    <span>${item.name} - $${item.price.toFixed(2)}</span>
+                    <button onclick="removeFromOrder(${index})">Remove</button>
+                `;
+                orderItems.appendChild(orderItem);
+
+                totalPrice += item.price;
+            });
+
+            // Update total price
+            totalPriceElement.textContent = `Total: $${totalPrice.toFixed(2)}`;
+        }
+
+        function submitOrder() {
+            // Prepare order data
+            const orderData = JSON.stringify(order);
+
+            // Send order data to the server
+            fetch('https://your-server-endpoint.com/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: orderData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Order submitted successfully!');
+                console.log('Response:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit order. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>

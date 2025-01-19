@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .order { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Order Dashboard</h1>
+    <div id="orders"></div>
+
+    <script>
+        function fetchOrders() {
+            fetch('https://your-server-endpoint.com/orders')
+                .then(response => response.json())
+                .then(data => {
+                    const ordersDiv = document.getElementById('orders');
+                    ordersDiv.innerHTML = '';
+                    data.forEach((order, index) => {
+                        const orderDiv = document.createElement('div');
+                        orderDiv.className = 'order';
+                        orderDiv.textContent = `Order ${index + 1}: ${order.map(item => item.name).join(', ')}`;
+                        ordersDiv.appendChild(orderDiv);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Fetch orders every 5 seconds
+        setInterval(fetchOrders, 5000);
+    </script>
+</body>
+</html>
